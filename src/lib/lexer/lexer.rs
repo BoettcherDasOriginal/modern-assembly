@@ -276,6 +276,13 @@ mod test {
                 print "???"
             else:
                 move x 1
+            
+            let dir "./test/RT.pdf"
+            let aw
+            move aw openDir dir
+        
+        fn openDir dir:
+            return "is here and there..."
          "#;
 
         let mut lex = Lexer::new(input.into());
