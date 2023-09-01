@@ -8,4 +8,4 @@
 Modern Assembly is an experimental native language.<br>
 Its main goal is to mix some parts of high-level languages with the good old parts of low-level assembler.
 
-<em>/!\ Modern Assembly is at an early development stage. Don't expect everything to work smoothly. (you have been warned) /!\
+<em>⚠ Modern Assembly is at an early development stage. Don't expect everything to work smoothly. (you have been warned) ⚠
