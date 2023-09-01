@@ -11,7 +11,7 @@ Its main goal is to mix some parts of high-level languages with the good old par
 <em>⚠ Modern Assembly is at an early development stage. Don't expect everything to work smoothly ⚠</em>
 ```
 fn main:
-  var msg "Hello, world!"
+  let msg "Hello, world!"
   print msg
             
   var x 1
