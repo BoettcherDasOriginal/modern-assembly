@@ -7,6 +7,7 @@ use anyhow::Result;
 pub enum Token {
     Ident(String),
     Int(String),
+    String(String),
 
     Illegal,
     NewLine,
@@ -36,6 +37,7 @@ impl Display for Token {
         return match self {
             Token::Ident(x) => write!(f, "Ident({})", x),
             Token::Int(x) => write!(f, "Int({})", x),
+            Token::String(x) => write!(f, "String({})", x),
             Token::Illegal => write!(f, "Illegal"),
             Token::NewLine => write!(f, "NewLine"),
             Token::Eof => write!(f, "Eof"),
@@ -57,6 +59,7 @@ impl Display for Token {
     }
 }
 
+#[derive(Debug)]
 pub struct Lexer {
     position: usize,
     read_position: usize,
@@ -95,6 +98,10 @@ impl Lexer {
             b'=' => {
                 self.read_char();
                 Token::Equal
+            },
+            b'"' => {
+                let string_literal = self.read_string()?;
+                Token::String(string_literal)
             },
             b'a'..=b'z' | b'A'..=b'Z' | b'_' => {
                 let ident = self.read_ident();
@@ -139,6 +146,19 @@ impl Lexer {
         self.read_position += 1;
     }
 
+    fn read_string(&mut self) -> Result<String> {
+        let mut string_literal = String::new();
+        self.read_char();
+        while self.ch != b'"' {
+            if self.ch == 0 {
+                return Err(anyhow::anyhow!("Unclosed string literal"));
+            }
+            string_literal.push(self.ch as char);
+            self.read_char();
+        }
+        Ok(string_literal)
+    }
+
     fn skip_whitespace(&mut self) {
         while self.ch == b' ' {
             self.read_char();
@@ -161,6 +181,18 @@ impl Lexer {
         }
 
         return String::from_utf8_lossy(&self.input[pos..self.position]).to_string();
+    }
+
+    pub fn collect(&mut self) -> Result<Vec<Token>> {
+        let mut tokens = Vec::new();
+        loop {
+            let token = self.next_token()?;
+            if token == Token::Eof {
+                break;
+            }
+            tokens.push(token);
+        }
+        Ok(tokens)
     }
 }
 
@@ -194,6 +226,8 @@ mod test {
     fn get_next_complete() -> Result<()> {
         let input = r#"fn main:
             let a 5
+            if a != 4:
+                print "too baad!"
          "#;
 
         let mut lex = Lexer::new(input.into());
@@ -207,6 +241,15 @@ mod test {
             Token::Ident(String::from("a")),
             Token::Int(String::from("5")),
             Token::NewLine,
+            Token::If,
+            Token::Ident(String::from("a")),
+            Token::NotEqual,
+            Token::Int(String::from("4")),
+            Token::Colon,
+            Token::NewLine,
+            Token::Ident(String::from("print")),
+            Token::String(String::from("too baad!")),
+            Token::NewLine,
             Token::Eof,
         ];
 
@@ -215,6 +258,21 @@ mod test {
             println!("expected: {:?}, received {:?}", token, next_token);
             assert_eq!(token, next_token);
         }
+
+        return Ok(());
+    }
+
+    #[test]
+    fn get_next_print() -> Result<()> {
+        let input = r#"fn main:
+            let a 5
+            if a != 4:
+                print "too baad!"
+         "#;
+
+        let mut lex = Lexer::new(input.into());
+
+        print!("{:?}", lex.collect());
 
         return Ok(());
     }
