@@ -1,0 +1,14 @@
+[package]
+name = "modern_asm"
+version = "0.0.1"
+edition = "2021"
+
+[dependencies]
+
+[lib]
+name = "modern_asm"
+path = "src/lib/modern_asm.rs"
+
+[[bin]]
+name = "modern_asm"
+path = "src/bin/main.rs"
