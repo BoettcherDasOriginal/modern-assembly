@@ -23,3 +23,6 @@ fn main:
   else:
      move x 1
 ```
+## To Do's
+- [x] Add Lexer
+- [ ] Add Parser (that's a lot of work)
