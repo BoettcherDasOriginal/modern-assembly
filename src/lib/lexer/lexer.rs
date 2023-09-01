@@ -282,7 +282,7 @@ mod test {
             move aw openDir dir
         
         fn openDir dir:
-            return "is here and there..."
+            return dir # does some imaginary stuff here
          "#;
 
         let mut lex = Lexer::new(input.into());
