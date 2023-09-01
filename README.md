@@ -26,3 +26,4 @@ fn main:
 ## To Do's
 - [x] Add Lexer
 - [ ] Add Parser (that's a lot of work)
+- [ ] For Future: Add for/while loops, floats, Syntax Sugar, more macro functions,...
