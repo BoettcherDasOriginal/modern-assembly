@@ -265,9 +265,17 @@ mod test {
     #[test]
     fn get_next_print() -> Result<()> {
         let input = r#"fn main:
-            let a 5
-            if a != 4:
-                print "too baad!"
+            let msg "Hello, world!"
+            print msg
+                    
+            var x 1
+            add x 2 2
+            print x
+        
+            if msg == x:
+                print "???"
+            else:
+                move x 1
          "#;
 
         let mut lex = Lexer::new(input.into());
