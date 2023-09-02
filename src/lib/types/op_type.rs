@@ -11,6 +11,12 @@ pub enum Operation {
     Mul, // *
     Div, // /
     Mod, // %
+
+    //Relational Operators
+    Equal, // ==
+    NotEqual, // !=
+    LessThan, // <
+    GreaterThan, // >
 }
 
 #[derive(Clone)]

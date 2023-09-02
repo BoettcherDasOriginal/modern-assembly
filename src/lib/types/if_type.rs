@@ -1,18 +1,8 @@
 use crate::types::lang_type::LangType;
 
 #[derive(Clone)]
-pub enum Operator {
-    Equal,
-    NotEqual,
-    LessThan,
-    GreaterThan,
-}
-
-#[derive(Clone)]
 pub struct IfType{
-    op: Operator,
-    lhs: Box<LangType>,
-    rhs: Box<LangType>,
+    condition: Box<LangType>,
     body: Vec<LangType>,
     else_body: Vec<LangType>,
 }
@@ -20,9 +10,7 @@ pub struct IfType{
 impl Default for IfType {
     fn default() -> Self {
         Self { 
-            op: Operator::Equal, 
-            lhs: Box::new(LangType::Undefined(0)),
-            rhs: Box::new(LangType::Undefined(0)),
+            condition: Box::new(LangType::Undefined(0)),
             body: vec![], 
             else_body: vec![], 
         }
@@ -30,7 +18,7 @@ impl Default for IfType {
 }
 
 impl IfType {
-    pub fn new(op: Operator,lhs: LangType,rhs: LangType, body: Vec<LangType>, else_body: Vec<LangType>) -> Self{
-        Self { op: op,lhs: Box::new(lhs),rhs: Box::new(rhs), body: body, else_body: else_body }
+    pub fn new(condition: LangType, body: Vec<LangType>, else_body: Vec<LangType>) -> Self{
+        Self { condition: Box::new(condition), body: body, else_body: else_body }
     }
 }
