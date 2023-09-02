@@ -298,7 +298,7 @@ mod test {
         
         fn openDir dir:
             return dir # does some imaginary stuff here
-            "#;
+        "#;
 
         let mut lex = Lexer::new(input.into());
 
