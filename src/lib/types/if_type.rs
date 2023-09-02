@@ -1,6 +1,4 @@
 use crate::types::lang_type::LangType;
-use super::primitive_type::PrimitiveType;
-use super::primitive_type::Primitives;
 
 #[derive(Clone)]
 pub enum Operator {
@@ -23,8 +21,8 @@ impl Default for IfType {
     fn default() -> Self {
         Self { 
             op: Operator::Equal, 
-            lhs: Box::new(LangType::Primitive(PrimitiveType { value: "0".to_string(), primitive: Primitives::Int })),
-            rhs: Box::new(LangType::Primitive(PrimitiveType { value: "0".to_string(), primitive: Primitives::Int })),
+            lhs: Box::new(LangType::Undefined(0)),
+            rhs: Box::new(LangType::Undefined(0)),
             body: vec![], 
             else_body: vec![], 
         }
