@@ -3,7 +3,7 @@ use std::fmt::Display;
 use anyhow::Result;
 
 #[allow(dead_code)]
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Token {
     Ident(String),
     Int(String),
