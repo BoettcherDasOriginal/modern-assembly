@@ -31,6 +31,8 @@ pub enum Token {
     Return,
     True,
     False,
+
+    End,
 }
 
 impl Display for Token {
@@ -57,6 +59,7 @@ impl Display for Token {
             Token::Return => write!(f, "Return"),
             Token::True => write!(f, "True"),
             Token::False => write!(f, "False"),
+            Token::End => write!(f, "End"),
         };
     }
 }
@@ -120,6 +123,7 @@ impl Lexer {
                     "true" => Token::True,
                     "return" => Token::Return,
                     "else" => Token::Else,
+                    "end" => Token::End,
                     _ => Token::Ident(ident),
                 });
             },
@@ -243,7 +247,9 @@ mod test {
             let a 5
             if a != 4:
                 print "too baad!"
-         "#;
+            end
+        end
+        "#;
 
         let mut lex = Lexer::new(input.into());
 
@@ -264,6 +270,10 @@ mod test {
             Token::NewLine,
             Token::Ident(String::from("print")),
             Token::String(String::from("too baad!")),
+            Token::NewLine,
+            Token::End,
+            Token::NewLine,
+            Token::End,
             Token::NewLine,
             Token::Eof,
         ];
@@ -291,13 +301,16 @@ mod test {
                 print "???"
             else:
                 move x 1
+            end
             
             let dir "./test/RT.pdf"
             let aw
-            move aw openDir dir
-        
-        fn openDir dir:
+            move aw openDir asd
+        end
+
+        fn openDir asd:
             return dir # does some imaginary stuff here
+        end
         "#;
 
         let mut lex = Lexer::new(input.into());
