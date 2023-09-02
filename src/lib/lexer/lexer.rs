@@ -303,13 +303,13 @@ mod test {
                 move x 1
             end
             
-            let dir "./test/RT.pdf"
             let aw
-            move aw openDir asd
+            move aw openDir "./test/RT.pdf"
         end
 
         fn openDir asd:
-            return dir # does some imaginary stuff here
+            add asd "something" # does some imaginary stuff here
+            return asd
         end
         "#;
 
