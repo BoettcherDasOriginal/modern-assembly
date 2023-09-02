@@ -8,6 +8,7 @@ pub enum Token {
     Ident(String),
     Int(String),
     String(String),
+    Comment(String),
 
     Illegal,
     NewLine,
@@ -38,6 +39,7 @@ impl Display for Token {
             Token::Ident(x) => write!(f, "Ident({})", x),
             Token::Int(x) => write!(f, "Int({})", x),
             Token::String(x) => write!(f, "String({})", x),
+            Token::Comment(x) => write!(f, "Comment({})", x),
             Token::Illegal => write!(f, "Illegal"),
             Token::NewLine => write!(f, "NewLine"),
             Token::Eof => write!(f, "Eof"),
@@ -103,6 +105,10 @@ impl Lexer {
                 let string_literal = self.read_string()?;
                 Token::String(string_literal)
             },
+            b'#' => {
+                let comment = self.read_comment()?;
+                Token::Comment(comment)
+            }
             b'a'..=b'z' | b'A'..=b'Z' | b'_' => {
                 let ident = self.read_ident();
                 return Ok(match ident.as_str() {
@@ -146,6 +152,12 @@ impl Lexer {
         self.read_position += 1;
     }
 
+    fn skip_whitespace(&mut self) {
+        while self.ch == b' ' {
+            self.read_char();
+        }
+    }
+
     fn read_string(&mut self) -> Result<String> {
         let mut string_literal = String::new();
         self.read_char();
@@ -159,10 +171,13 @@ impl Lexer {
         Ok(string_literal)
     }
 
-    fn skip_whitespace(&mut self) {
-        while self.ch == b' ' {
+    fn read_comment(&mut self) -> Result<String> {
+        let mut comment = String::new();
+        while !(self.peek() == b'\n' || self.peek() == 0) {
             self.read_char();
+            comment.push(self.ch as char);
         }
+        Ok(comment)
     }
 
     fn read_ident(&mut self) -> String {
@@ -283,7 +298,7 @@ mod test {
         
         fn openDir dir:
             return dir # does some imaginary stuff here
-         "#;
+            "#;
 
         let mut lex = Lexer::new(input.into());
 
