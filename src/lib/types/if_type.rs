@@ -1,7 +1,7 @@
 use crate::types::lang_type::LangType;
 
 #[derive(Clone)]
-pub struct IfType{
+pub struct IfType {
     condition: Box<LangType>,
     body: Vec<LangType>,
     else_body: Vec<LangType>,
@@ -9,16 +9,20 @@ pub struct IfType{
 
 impl Default for IfType {
     fn default() -> Self {
-        Self { 
+        Self {
             condition: Box::new(LangType::Undefined(0)),
-            body: vec![], 
-            else_body: vec![], 
+            body: vec![],
+            else_body: vec![],
         }
     }
 }
 
 impl IfType {
-    pub fn new(condition: LangType, body: Vec<LangType>, else_body: Vec<LangType>) -> Self{
-        Self { condition: Box::new(condition), body: body, else_body: else_body }
+    pub fn new(condition: LangType, body: Vec<LangType>, else_body: Vec<LangType>) -> Self {
+        Self {
+            condition: Box::new(condition),
+            body: body,
+            else_body: else_body,
+        }
     }
 }

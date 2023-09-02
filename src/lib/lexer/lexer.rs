@@ -8,6 +8,7 @@ pub enum Token {
     Ident(String),
     Int(String),
     String(String),
+    Bool(bool),
     Comment(String),
 
     Illegal,
@@ -29,8 +30,6 @@ pub enum Token {
     If,
     Else,
     Return,
-    True,
-    False,
 
     End,
 }
@@ -41,6 +40,7 @@ impl Display for Token {
             Token::Ident(x) => write!(f, "Ident({})", x),
             Token::Int(x) => write!(f, "Int({})", x),
             Token::String(x) => write!(f, "String({})", x),
+            Token::Bool(x) => write!(f, "Bool({})", x),
             Token::Comment(x) => write!(f, "Comment({})", x),
             Token::Illegal => write!(f, "Illegal"),
             Token::NewLine => write!(f, "NewLine"),
@@ -57,8 +57,6 @@ impl Display for Token {
             Token::If => write!(f, "If"),
             Token::Else => write!(f, "Else"),
             Token::Return => write!(f, "Return"),
-            Token::True => write!(f, "True"),
-            Token::False => write!(f, "False"),
             Token::End => write!(f, "End"),
         };
     }
@@ -119,8 +117,8 @@ impl Lexer {
                     "let" => Token::Let,
                     "var" => Token::Var,
                     "if" => Token::If,
-                    "false" => Token::False,
-                    "true" => Token::True,
+                    "false" => Token::Bool(false),
+                    "true" => Token::Bool(true),
                     "return" => Token::Return,
                     "else" => Token::Else,
                     "end" => Token::End,

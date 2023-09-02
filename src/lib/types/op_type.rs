@@ -13,14 +13,14 @@ pub enum Operation {
     Mod, // %
 
     //Relational Operators
-    Equal, // ==
-    NotEqual, // !=
-    LessThan, // <
+    Equal,       // ==
+    NotEqual,    // !=
+    LessThan,    // <
     GreaterThan, // >
 }
 
 #[derive(Clone)]
-pub struct OpType{
+pub struct OpType {
     op: Operation,
     lhs: Box<LangType>,
     rhs: Box<LangType>,
@@ -28,7 +28,7 @@ pub struct OpType{
 
 impl Default for OpType {
     fn default() -> Self {
-        Self { 
+        Self {
             op: Operation::Assign,
             lhs: Box::new(LangType::Undefined(0)),
             rhs: Box::new(LangType::Undefined(0)),
@@ -37,8 +37,8 @@ impl Default for OpType {
 }
 
 impl OpType {
-    pub fn new(op: Operation,lhs: LangType, rhs: LangType) -> Self{
-        Self { 
+    pub fn new(op: Operation, lhs: LangType, rhs: LangType) -> Self {
+        Self {
             op: op,
             lhs: Box::new(lhs),
             rhs: Box::new(rhs),
