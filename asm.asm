@@ -10,6 +10,8 @@ fn main:
       print "???"
    else:
       move x 1
+   end
+end
 
 old:
    mov	edx,len     # message length
