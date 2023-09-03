@@ -11,5 +11,10 @@ pub enum LangType {
     Var(VarType),
     Func(FuncType),
     If(IfType),
+
+    // Parser helper
+    End,
+
+    // for future Error Handling
     Undefined(u64),
 }
