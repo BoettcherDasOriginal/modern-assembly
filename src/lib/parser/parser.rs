@@ -1,8 +1,15 @@
+use anyhow::Ok;
 use anyhow::Result;
 
 use crate::lexer::lexer::Token;
 use crate::types::func_type::FuncType;
+use crate::types::if_type::IfType;
 use crate::types::lang_type::LangType;
+use crate::types::primitive_type::PrimitiveType;
+use crate::types::primitive_type::Primitives;
+use crate::types::var_type::VarType;
+use crate::types::op_type::OpType;
+use crate::types::op_type::Operation;
 
 pub struct ParserResult {
     pub lang_t: LangType,
@@ -69,7 +76,64 @@ impl Parser {
                 return Ok(ParserResult::new(LangType::Func(FuncType::new(fn_name, fn_body)), pos));
             },
 
-            
+            Token::If => {
+                //lhs & rhs for the condition
+                let mut lhs = get_hs(organized_tokenlist.to_vec(), pos, 1).unwrap();
+
+                let mut rhs = get_hs(organized_tokenlist.to_vec(), pos, 3).unwrap();
+
+                //op for the condition
+                let mut condition = match &organized_tokenlist[pos][2] {
+                    Token::Equal => {
+                        LangType::Op(OpType::new(Operation::Equal, lhs, rhs))
+                    }
+
+                    Token::NotEqual => {
+                        LangType::Op(OpType::new(Operation::NotEqual, lhs, rhs))
+                    }
+
+                    Token::LessThan => {
+                        LangType::Op(OpType::new(Operation::LessThan, lhs, rhs))
+                    }
+
+                    Token::GreaterThan => {
+                        LangType::Op(OpType::new(Operation::GreaterThan, lhs, rhs))
+                    }
+
+                    _ => {
+                        LangType::Undefined(0)
+                    }
+                };
+
+                //get if/else bodys
+
+                let mut if_body: Vec<LangType> = vec![];
+                loop {
+                    let lang_t = self.parse_line(pos + 1).unwrap();
+                    if matches!(lang_t.lang_t,LangType::End){
+                        break;
+                    }
+                    if matches!(lang_t.lang_t,LangType::Else){
+                        break;
+                    }
+                    
+                    if_body.append(&mut vec![lang_t.lang_t]);
+                    pos = lang_t.pos;
+                }
+
+                let mut else_body: Vec<LangType> = vec![];
+                loop {
+                    let lang_t = self.parse_line(pos + 1).unwrap();
+                    if matches!(lang_t.lang_t,LangType::End){
+                        break;
+                    }
+                    
+                    else_body.append(&mut vec![lang_t.lang_t]);
+                    pos = lang_t.pos;
+                }
+
+                return Ok(ParserResult::new(LangType::If(IfType::new(condition, if_body, else_body)), pos));
+            },
 
             _ => {
                 return Ok(ParserResult::new(LangType::Undefined(0), pos));
@@ -121,4 +185,30 @@ pub fn organize_tokenlist(tokenlist: Vec<Token>) -> Vec<Vec<Token>> {
     }
 
     return organized_list;
+}
+
+fn get_hs(organized_tokenlist: Vec<Vec<Token>>,x_pos: usize,y_pos: usize) -> Result<LangType>{
+    let mut hs = match &organized_tokenlist[x_pos][y_pos] {
+        Token::Ident(ident) => {
+            LangType::Var(VarType::new(ident.to_string()))
+        }
+
+        Token::Int(value) => {
+            LangType::Primitive(PrimitiveType::new(value.to_string(), Primitives::Int))
+        }
+
+        Token::String(value) => {
+            LangType::Primitive(PrimitiveType::new(value.to_string(), Primitives::String))
+        }
+
+        Token::Bool(value) => {
+            LangType::Primitive(PrimitiveType::new(value.to_string(), Primitives::Bool))
+        }
+
+        _ => {
+            LangType::Undefined(0)
+        }
+    };
+
+    Ok(hs)
 }

@@ -14,6 +14,7 @@ pub enum LangType {
 
     // Parser helper
     End,
+    Else,
 
     // for future Error Handling
     Undefined(u64),

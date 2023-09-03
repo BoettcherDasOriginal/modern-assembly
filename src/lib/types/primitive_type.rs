@@ -4,6 +4,7 @@
 pub enum Primitives {
     Int,
     String,
+    Bool,
 }
 
 #[derive(Clone)]
@@ -35,5 +36,9 @@ impl PrimitiveType {
 
     pub fn is_string(&self) -> bool {
         matches!(self.primitive, Primitives::String)
+    }
+
+    pub fn is_bool(&self) -> bool{
+        matches!(self.primitive, Primitives::Bool)
     }
 }
