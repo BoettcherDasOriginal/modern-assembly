@@ -50,11 +50,11 @@ impl OpType {
 
     pub fn get_op_by_string(op_name: &str) -> Operation{
         match op_name {
-            "Add" => return Operation::Add,
-            "Sub" => return Operation::Sub,
-            "Mul" => return Operation::Mul,
-            "Div" => return Operation::Div,
-            "Mod" => return Operation::Mod,
+            "add" => return Operation::Add,
+            "sub" => return Operation::Sub,
+            "mul" => return Operation::Mul,
+            "div" => return Operation::Div,
+            "mod" => return Operation::Mod,
             _ => return Operation::Error,
         }
     }

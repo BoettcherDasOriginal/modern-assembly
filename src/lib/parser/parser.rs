@@ -47,7 +47,6 @@ impl Parser {
         let max_pos = organized_tokenlist.len();
 
         loop {
-            println!("{},{}",pos,max_pos);
             if pos >= max_pos{
                 break;
             }
@@ -66,14 +65,12 @@ impl Parser {
 
     fn parse_line(&mut self,mut pos: usize) -> Result<ParserResult> {
         let Self { tokenlist, organized_tokenlist } = self;
-        println!("{}",pos);
         if pos >= organized_tokenlist.len() {
             return Ok(ParserResult::new(LangType::Undefined(0), pos));
         }
         if &0 ==  &organized_tokenlist[pos].len(){
             return Ok(ParserResult::new(LangType::Undefined(0), pos));
         }
-        println!("[{},{}]",pos,&organized_tokenlist[pos].len());
         let tok = &organized_tokenlist[pos][0];
 
         match tok {
@@ -253,7 +250,11 @@ pub fn organize_tokenlist(tokenlist: Vec<Token>) -> Vec<Vec<Token>> {
 
     for t in tokenlist {
         if t == Token::NewLine {
-            if level.len() != 0{
+            if organized_list[0] == vec![] && level.len() != 0 {
+                organized_list[0] = level.clone();
+                level = vec![];
+            }
+            else if level.len() != 0{
                 organized_list.append(&mut vec![level.clone()]);
                 level = vec![];
             }
@@ -309,7 +310,7 @@ mod test {
         let input = r#"fn main:
         let a 5
         if a != 4:
-            Add a a 6
+            add a a 6
         end
     end"#;
 
@@ -344,7 +345,9 @@ mod test {
 
         let mut par = Parser::new(lex.collect().unwrap());
 
-        print!("{:?}", par.parse_file());
+        println!("{:?}",par.tokenlist);
+        println!("{:?}",par.organized_tokenlist);
+        println!("{:?}", par.parse_file());
 
         return Ok(())
     }
