@@ -17,6 +17,9 @@ pub enum Operation {
     NotEqual,    // !=
     LessThan,    // <
     GreaterThan, // >
+
+    //Debug
+    Error,
 }
 
 #[derive(Clone)]
@@ -42,6 +45,27 @@ impl OpType {
             op: op,
             lhs: Box::new(lhs),
             rhs: Box::new(rhs),
+        }
+    }
+
+    pub fn get_op_by_string(op_name: &str) -> Operation{
+        match op_name {
+            "Add" => return Operation::Add,
+            "Sub" => return Operation::Sub,
+            "Mul" => return Operation::Mul,
+            "Div" => return Operation::Div,
+            "Mod" => return Operation::Mod,
+            _ => return Operation::Error,
+        }
+    }
+
+    pub fn is_op(op_name: &str) -> bool{
+        let op = OpType::get_op_by_string(op_name);
+        if matches!(op,Operation::Error) {
+            return false;
+        }
+        else {
+            return true;
         }
     }
 }

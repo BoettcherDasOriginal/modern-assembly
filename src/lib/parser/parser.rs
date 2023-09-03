@@ -53,6 +53,47 @@ impl Parser {
         let tok = &organized_tokenlist[pos][0];
 
         match tok {
+            //Op parser
+            Token::Ident(op_name) => {
+                if OpType::is_op(op_name){
+                    let op = OpType::get_op_by_string(op_name);
+                    if organized_tokenlist[pos].len() > 3 {
+                        let mut var_name = "".to_string();
+                        if let Token::Ident(name) = &organized_tokenlist[pos][1] {
+                            var_name = name.to_string();
+                        }
+                        else {
+                            return Ok(ParserResult::new(LangType::Undefined(0), pos));
+                        }
+
+                        let dest = LangType::Var(VarType::new(var_name));
+                        let lhs = get_hs(organized_tokenlist.to_vec(), pos, 2).unwrap();
+                        let rhs = get_hs(organized_tokenlist.to_vec(), pos, 3).unwrap();
+
+                        let result = LangType::Op(OpType::new(op, lhs, rhs));
+                        return Ok(ParserResult::new(LangType::Op(OpType::new(Operation::Assign, dest, result)), pos));
+                    }
+                    else {
+                        let mut var_name = "".to_string();
+                        if let Token::Ident(name) = &organized_tokenlist[pos][1] {
+                            var_name = name.to_string();
+                        }
+                        else {
+                            return Ok(ParserResult::new(LangType::Undefined(0), pos));
+                        }
+
+                        let lhs = LangType::Var(VarType::new(var_name));
+                        let rhs = get_hs(organized_tokenlist.to_vec(), pos, 2).unwrap();
+
+                        let result = LangType::Op(OpType::new(op, lhs.clone(), rhs));
+                        return Ok(ParserResult::new(LangType::Op(OpType::new(Operation::Assign, lhs, result)), pos));
+                    }
+                }
+                else {
+                    return Ok(ParserResult::new(LangType::Undefined(0), pos));
+                }
+            },
+
             //Var parser
             Token::Var|Token::Let => {
                 // make sure var is var
@@ -160,33 +201,6 @@ impl Parser {
         }
     }
 }
-
-// example token list
-/* 
-let tokens = vec![
-            Token::Function,
-            Token::Ident(String::from("main")),
-            Token::Colon,
-            Token::NewLine,
-            Token::Let,
-            Token::Ident(String::from("a")),
-            Token::Int(String::from("5")),
-            Token::NewLine,
-            Token::If,
-            Token::Ident(String::from("a")),
-            Token::NotEqual,
-            Token::Int(String::from("4")),
-            Token::Colon,
-            Token::NewLine,
-            Token::Ident(String::from("print")),
-            Token::String(String::from("too baad!")),
-            Token::NewLine,
-            Token::End,
-            Token::NewLine,
-            Token::End,
-            Token::NewLine,
-            Token::Eof,
-        ];*/
 
 // -----------------
 
