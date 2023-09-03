@@ -53,6 +53,20 @@ impl Parser {
         let tok = &organized_tokenlist[pos][0];
 
         match tok {
+            //Var parser
+            Token::Var|Token::Let => {
+                let mut var_name = "".to_string();
+                if let Token::Ident(name) = &organized_tokenlist[pos][1] {
+                    var_name = name.to_string();
+                }
+                else {
+                    return Ok(ParserResult::new(LangType::Undefined(0), pos));
+                }
+
+                return Ok(ParserResult::new(LangType::Var(VarType::new(var_name)), pos));
+            }
+
+            //Function parser
             Token::Function => {
                 let mut fn_name = "".to_string();
                 if let Token::Ident(name) = &organized_tokenlist[pos][1] {
@@ -76,6 +90,7 @@ impl Parser {
                 return Ok(ParserResult::new(LangType::Func(FuncType::new(fn_name, fn_body)), pos));
             },
 
+            //If/else parser
             Token::If => {
                 //lhs & rhs for the condition
                 let mut lhs = get_hs(organized_tokenlist.to_vec(), pos, 1).unwrap();
