@@ -4,7 +4,7 @@ use super::op_type::OpType;
 use super::primitive_type::PrimitiveType;
 use super::var_type::VarType;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum LangType {
     Op(OpType),
     Primitive(PrimitiveType),
@@ -13,8 +13,9 @@ pub enum LangType {
     If(IfType),
 
     // Parser helper
-    End,
     Else,
+    End,
+    Eof,
 
     // for future Error Handling
     Undefined(u64),

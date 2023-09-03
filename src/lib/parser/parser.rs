@@ -24,10 +24,10 @@ impl ParserResult {
 
 // -----
 
+#[derive(Debug)]
 pub struct Parser {
     tokenlist: Vec<Token>,
     organized_tokenlist: Vec<Vec<Token>>, //Token list splited by new line
-    ast: Vec<LangType>,
 }
 
 impl Parser {
@@ -35,21 +35,45 @@ impl Parser {
         Self {
             tokenlist: tokenlist.clone(),
             organized_tokenlist: organize_tokenlist(tokenlist),
-            ast: vec![],
         }
     }
 
-    pub fn generate_ast(&mut self) -> Result<Vec<LangType>>{
-        let Self { tokenlist, organized_tokenlist, ast } = self;
-        *ast = vec![];
+    pub fn parse_file(&mut self) -> Result<Vec<LangType>>{
+        let Self { tokenlist, organized_tokenlist } = self;
 
-        
+        *organized_tokenlist = organize_tokenlist(tokenlist.to_vec());
+        let mut ast: Vec<LangType> = vec![];
+        let mut pos = 0;
+        let max_pos = organized_tokenlist.len();
 
-        return Ok(ast.to_vec())
+        loop {
+            println!("{},{}",pos,max_pos);
+            if pos >= max_pos{
+                break;
+            }
+
+            let lang_t = self.parse_line(pos).unwrap();
+            if matches!(lang_t.lang_t,LangType::Eof){
+                break;
+            }
+                    
+            ast.append(&mut vec![lang_t.lang_t]);
+            pos = lang_t.pos + 1;
+        }
+
+        return Ok(ast)
     }
 
-    pub fn parse_line(&mut self,mut pos: usize) -> Result<ParserResult> {
-        let Self { tokenlist, organized_tokenlist, ast } = self;
+    fn parse_line(&mut self,mut pos: usize) -> Result<ParserResult> {
+        let Self { tokenlist, organized_tokenlist } = self;
+        println!("{}",pos);
+        if pos >= organized_tokenlist.len() {
+            return Ok(ParserResult::new(LangType::Undefined(0), pos));
+        }
+        if &0 ==  &organized_tokenlist[pos].len(){
+            return Ok(ParserResult::new(LangType::Undefined(0), pos));
+        }
+        println!("[{},{}]",pos,&organized_tokenlist[pos].len());
         let tok = &organized_tokenlist[pos][0];
 
         match tok {
@@ -127,6 +151,9 @@ impl Parser {
                     if matches!(lang_t.lang_t,LangType::End){
                         break;
                     }
+                    if matches!(lang_t.lang_t,LangType::Eof){
+                        break;
+                    }
                     
                     fn_body.append(&mut vec![lang_t.lang_t]);
                     pos = lang_t.pos;
@@ -176,6 +203,9 @@ impl Parser {
                     if matches!(lang_t.lang_t,LangType::Else){
                         break;
                     }
+                    if matches!(lang_t.lang_t,LangType::Eof){
+                        break;
+                    }
                     
                     if_body.append(&mut vec![lang_t.lang_t]);
                     pos = lang_t.pos;
@@ -187,12 +217,25 @@ impl Parser {
                     if matches!(lang_t.lang_t,LangType::End){
                         break;
                     }
+                    if matches!(lang_t.lang_t,LangType::Eof){
+                        break;
+                    }
                     
                     else_body.append(&mut vec![lang_t.lang_t]);
                     pos = lang_t.pos;
                 }
 
                 return Ok(ParserResult::new(LangType::If(IfType::new(condition, if_body, else_body)), pos));
+            },
+
+            //End
+            Token::End => {
+                return Ok(ParserResult::new(LangType::End, pos));
+            }
+
+            //File End
+            Token::Eof => {
+                return Ok(ParserResult::new(LangType::Eof, pos));
             },
 
             _ => {
@@ -210,9 +253,12 @@ pub fn organize_tokenlist(tokenlist: Vec<Token>) -> Vec<Vec<Token>> {
 
     for t in tokenlist {
         if t == Token::NewLine {
-            organized_list.append(&mut vec![level.clone()]);
-            level = vec![];
-        } else {
+            if level.len() != 0{
+                organized_list.append(&mut vec![level.clone()]);
+                level = vec![];
+            }
+        } 
+        else {
             level.append(&mut vec![t.clone()]);
         }
     }
@@ -244,4 +290,62 @@ fn get_hs(organized_tokenlist: Vec<Vec<Token>>,x_pos: usize,y_pos: usize) -> Res
     };
 
     Ok(hs)
+}
+
+// ------------------------------------
+// Tests
+
+#[cfg(test)]
+mod test {
+    use anyhow::Ok;
+    use anyhow::Result;
+
+    use crate::lexer::lexer::Lexer;
+    use crate::lexer::lexer::Token;
+    use super::Parser;
+
+    #[test]
+    fn parse_string() -> Result<()>{
+        let input = r#"fn main:
+        let a 5
+        if a != 4:
+            Add a a 6
+        end
+    end"#;
+
+    let tokens = vec![
+        Token::Function,
+        Token::Ident(String::from("main")),
+        Token::Colon,
+        Token::NewLine,
+        Token::Let,
+        Token::Ident(String::from("a")),
+        Token::Int(String::from("5")),
+        Token::NewLine,
+        Token::If,
+        Token::Ident(String::from("a")),
+        Token::NotEqual,
+        Token::Int(String::from("4")),
+        Token::Colon,
+        Token::NewLine,
+        Token::Ident(String::from("Add")),
+        Token::Ident(String::from("a")),
+        Token::Int(String::from("6")),
+        Token::NewLine,
+        Token::End,
+        Token::NewLine,
+        Token::End,
+        Token::NewLine,
+        Token::Eof,
+        Token::NewLine,
+    ];
+
+        let mut lex = Lexer::new(input.into());
+
+        let mut par = Parser::new(lex.collect().unwrap());
+
+        print!("{:?}", par.parse_file());
+
+        return Ok(())
+    }
 }

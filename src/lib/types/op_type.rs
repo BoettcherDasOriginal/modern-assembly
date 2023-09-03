@@ -1,6 +1,6 @@
 use super::lang_type::LangType;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum Operation {
     //Basic Assignment Operator
     Assign, // let x 0 or move x 0 or in c: x = 0
@@ -22,7 +22,7 @@ pub enum Operation {
     Error,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct OpType {
     op: Operation,
     lhs: Box<LangType>,

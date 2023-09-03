@@ -1,6 +1,6 @@
 use crate::types::lang_type::LangType;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct FuncType {
     pub name: String,
     pub body: Vec<LangType>,

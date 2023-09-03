@@ -1,13 +1,13 @@
 //use crate::types::lang_type::LangType;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum Primitives {
     Int,
     String,
     Bool,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PrimitiveType {
     pub value: String,
     pub primitive: Primitives,

@@ -1,6 +1,6 @@
 use crate::types::lang_type::LangType;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct IfType {
     condition: Box<LangType>,
     body: Vec<LangType>,
