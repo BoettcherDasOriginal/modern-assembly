@@ -71,7 +71,7 @@ impl Parser {
 
     fn parse_line(&mut self, mut pos: usize) -> Result<ParserResult> {
         let Self {
-            tokenlist,
+            tokenlist: _,
             organized_tokenlist,
         } = self;
         if pos >= organized_tokenlist.len() {
@@ -136,8 +136,8 @@ impl Parser {
                     return Ok(ParserResult::new(LangType::Undefined(0), pos));
                 }
 
-                let mut lhs = LangType::Var(VarType::new(var_name));
-                let mut rhs = get_hs(organized_tokenlist.to_vec(), pos, 2).unwrap();
+                let lhs = LangType::Var(VarType::new(var_name));
+                let rhs = get_hs(organized_tokenlist.to_vec(), pos, 2).unwrap();
 
                 return Ok(ParserResult::new(
                     LangType::Op(OpType::new(Operation::Assign, lhs, rhs)),
@@ -177,12 +177,12 @@ impl Parser {
             //If/else parser
             Token::If => {
                 //lhs & rhs for the condition
-                let mut lhs = get_hs(organized_tokenlist.to_vec(), pos, 1).unwrap();
+                let lhs = get_hs(organized_tokenlist.to_vec(), pos, 1).unwrap();
 
-                let mut rhs = get_hs(organized_tokenlist.to_vec(), pos, 3).unwrap();
+                let rhs = get_hs(organized_tokenlist.to_vec(), pos, 3).unwrap();
 
                 //op for the condition
-                let mut condition = match &organized_tokenlist[pos][2] {
+                let condition = match &organized_tokenlist[pos][2] {
                     Token::Equal => LangType::Op(OpType::new(Operation::Equal, lhs, rhs)),
 
                     Token::NotEqual => LangType::Op(OpType::new(Operation::NotEqual, lhs, rhs)),
@@ -276,7 +276,7 @@ pub fn organize_tokenlist(tokenlist: Vec<Token>) -> Vec<Vec<Token>> {
 }
 
 fn get_hs(organized_tokenlist: Vec<Vec<Token>>, x_pos: usize, y_pos: usize) -> Result<LangType> {
-    let mut hs = match &organized_tokenlist[x_pos][y_pos] {
+    let hs = match &organized_tokenlist[x_pos][y_pos] {
         Token::Ident(ident) => LangType::Var(VarType::new(ident.to_string())),
 
         Token::Int(value) => {
@@ -318,7 +318,7 @@ mod test {
         end
     end"#;
 
-        let tokens = vec![
+        let _tokens = vec![
             Token::Function,
             Token::Ident(String::from("main")),
             Token::Colon,
