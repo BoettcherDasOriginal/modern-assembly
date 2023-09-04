@@ -128,7 +128,7 @@ impl Lexer {
             b'0'..=b'9' => return Ok(Token::Int(self.read_int())),
             b'\n' => Token::NewLine,
             0 => Token::Eof,
-            _ => unreachable!("no modern assembly program should contain these characters and you should feel bad about yourself")
+            _ => Token::Illegal
         };
 
         self.read_char();
