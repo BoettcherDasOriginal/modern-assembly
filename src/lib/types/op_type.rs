@@ -24,9 +24,9 @@ pub enum Operation {
 
 #[derive(Clone, Debug)]
 pub struct OpType {
-    op: Operation,
-    lhs: Box<LangType>,
-    rhs: Box<LangType>,
+    pub op: Operation,
+    pub lhs: Box<LangType>,
+    pub rhs: Box<LangType>,
 }
 
 impl Default for OpType {

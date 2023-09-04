@@ -1,6 +1,6 @@
 #[derive(Clone, Debug)]
 pub struct VarType {
-    name: String,
+    pub name: String,
 }
 
 impl Default for VarType {

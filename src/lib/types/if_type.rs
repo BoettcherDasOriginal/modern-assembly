@@ -2,9 +2,9 @@ use crate::types::lang_type::LangType;
 
 #[derive(Clone, Debug)]
 pub struct IfType {
-    condition: Box<LangType>,
-    body: Vec<LangType>,
-    else_body: Vec<LangType>,
+    pub condition: Box<LangType>,
+    pub body: Vec<LangType>,
+    pub else_body: Vec<LangType>,
 }
 
 impl Default for IfType {
