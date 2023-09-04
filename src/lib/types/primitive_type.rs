@@ -38,7 +38,7 @@ impl PrimitiveType {
         matches!(self.primitive, Primitives::String)
     }
 
-    pub fn is_bool(&self) -> bool{
+    pub fn is_bool(&self) -> bool {
         matches!(self.primitive, Primitives::Bool)
     }
 }

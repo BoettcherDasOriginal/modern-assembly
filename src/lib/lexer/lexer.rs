@@ -95,17 +95,17 @@ impl Lexer {
                 } else {
                     Token::Bang
                 }
-            },
+            }
             b'>' => Token::GreaterThan,
             b'<' => Token::LessThan,
             b'=' => {
                 self.read_char();
                 Token::Equal
-            },
+            }
             b'"' => {
                 let string_literal = self.read_string()?;
                 Token::String(string_literal)
-            },
+            }
             b'#' => {
                 let comment = self.read_comment()?;
                 Token::Comment(comment)
@@ -124,11 +124,11 @@ impl Lexer {
                     "end" => Token::End,
                     _ => Token::Ident(ident),
                 });
-            },
+            }
             b'0'..=b'9' => return Ok(Token::Int(self.read_int())),
             b'\n' => Token::NewLine,
             0 => Token::Eof,
-            _ => Token::Illegal
+            _ => Token::Illegal,
         };
 
         self.read_char();

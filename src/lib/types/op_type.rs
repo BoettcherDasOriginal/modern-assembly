@@ -48,7 +48,7 @@ impl OpType {
         }
     }
 
-    pub fn get_op_by_string(op_name: &str) -> Operation{
+    pub fn get_op_by_string(op_name: &str) -> Operation {
         match op_name {
             "add" => return Operation::Add,
             "sub" => return Operation::Sub,
@@ -59,12 +59,11 @@ impl OpType {
         }
     }
 
-    pub fn is_op(op_name: &str) -> bool{
+    pub fn is_op(op_name: &str) -> bool {
         let op = OpType::get_op_by_string(op_name);
-        if matches!(op,Operation::Error) {
+        if matches!(op, Operation::Error) {
             return false;
-        }
-        else {
+        } else {
             return true;
         }
     }
