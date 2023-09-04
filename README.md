@@ -39,9 +39,9 @@ fn main:
 end
 ```
 
-## Language Server Protocol (LSP) Extension
+## Language Configuration (LC) Extension
 
-We are also working on a Language Server Protocol (LSP) extension for VS Code. You can track its progress [here](https://github.com/nwrenger/modern-assembly-analyzer).
+We are also working on a Language Configuration (LC) extension for VS Code. You can track its progress [here](https://github.com/nwrenger/modern-assembly-analyzer).
 
 ## Documentation
 
