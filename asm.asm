@@ -2,7 +2,7 @@ fn main:
    let msg "Hello, world!"
    print msg
             
-   var x 1
+   let x 1
    add x 2 2
    print x
 

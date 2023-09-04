@@ -25,7 +25,6 @@ pub enum Token {
 
     Function,
     Let,
-    Var,
 
     If,
     Else,
@@ -53,7 +52,6 @@ impl Display for Token {
             Token::Colon => write!(f, "Colon"),
             Token::Function => write!(f, "Function"),
             Token::Let => write!(f, "Let"),
-            Token::Var => write!(f, "Variable"),
             Token::If => write!(f, "If"),
             Token::Else => write!(f, "Else"),
             Token::Return => write!(f, "Return"),
@@ -115,7 +113,6 @@ impl Lexer {
                 return Ok(match ident.as_str() {
                     "fn" => Token::Function,
                     "let" => Token::Let,
-                    "var" => Token::Var,
                     "if" => Token::If,
                     "false" => Token::Bool(false),
                     "true" => Token::Bool(true),
@@ -291,7 +288,7 @@ mod test {
             let msg "Hello, world!"
             print msg
                     
-            var x 1
+            let x 1
             add x 2 2
             print x
         
