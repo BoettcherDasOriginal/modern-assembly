@@ -292,7 +292,7 @@ mod test {
             print msg
                     
             let x 1
-            add x 2 2
+            add x 2
             print x
         
             if msg == x:
