@@ -240,10 +240,10 @@ pub fn organize_tokenlist(tokenlist: &[Token]) -> Vec<Vec<Token>> {
     for t in tokenlist {
         if t == &Token::NewLine {
             if organized_list[0] == vec![] && !level.is_empty() {
-                organized_list[0] = level.clone();
+                organized_list[0] = level;
                 level = vec![];
             } else if !level.is_empty() {
-                organized_list.append(&mut vec![level.clone()]);
+                organized_list.append(&mut vec![level]);
                 level = vec![];
             }
         } else {
