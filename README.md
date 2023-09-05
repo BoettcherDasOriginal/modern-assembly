@@ -24,7 +24,7 @@ Here is a small example that prints "Hello, World!" and performs a basic calcula
 
 ```
 fn main:
-  let msg "Hello, world!"
+  const msg "Hello, world!"
   print msg
             
   let x 1

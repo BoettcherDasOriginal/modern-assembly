@@ -1,5 +1,5 @@
 fn main:
-   let msg "Hello, world!"
+   const msg "Hello, world!"
    print msg
             
    let x 1

@@ -24,6 +24,7 @@ pub enum Token {
     GreaterThan,
 
     Function,
+    Const,
     Let,
 
     If,
@@ -51,6 +52,7 @@ impl Display for Token {
             Token::GreaterThan => write!(f, "GreaterThan"),
             Token::Colon => write!(f, "Colon"),
             Token::Function => write!(f, "Function"),
+            Token::Const => write!(f, "Const"),
             Token::Let => write!(f, "Let"),
             Token::If => write!(f, "If"),
             Token::Else => write!(f, "Else"),
@@ -113,6 +115,7 @@ impl Lexer {
                 return Ok(match ident.as_str() {
                     "fn" => Token::Function,
                     "let" => Token::Let,
+                    "const" => Token::Const,
                     "if" => Token::If,
                     "false" => Token::Bool(false),
                     "true" => Token::Bool(true),
@@ -285,7 +288,7 @@ mod test {
     #[test]
     fn get_next_print() -> Result<()> {
         let input = r#"fn main:
-            let msg "Hello, world!"
+            const msg "Hello, world!"
             print msg
                     
             let x 1

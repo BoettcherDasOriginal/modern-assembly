@@ -126,8 +126,8 @@ impl Parser {
                 }
             }
 
-            //Var parser
-            Token::Let => {
+            //Var parser, Todo: Const Handling
+            Token::Const | Token::Let => {
                 // make sure var is var
                 let mut var_name = "".to_string();
                 if let Token::Ident(name) = &organized_tokenlist[pos][1] {
