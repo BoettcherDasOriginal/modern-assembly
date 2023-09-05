@@ -24,10 +24,7 @@ impl Default for PrimitiveType {
 
 impl PrimitiveType {
     pub fn new(value: String, primitive: Primitives) -> Self {
-        Self {
-            value: value,
-            primitive: primitive,
-        }
+        Self { value, primitive }
     }
 
     pub fn is_int(&self) -> bool {

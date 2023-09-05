@@ -42,7 +42,7 @@ impl Default for OpType {
 impl OpType {
     pub fn new(op: Operation, lhs: LangType, rhs: LangType) -> Self {
         Self {
-            op: op,
+            op,
             lhs: Box::new(lhs),
             rhs: Box::new(rhs),
         }
@@ -50,21 +50,17 @@ impl OpType {
 
     pub fn get_op_by_string(op_name: &str) -> Operation {
         match op_name {
-            "add" => return Operation::Add,
-            "sub" => return Operation::Sub,
-            "mul" => return Operation::Mul,
-            "div" => return Operation::Div,
-            "mod" => return Operation::Mod,
-            _ => return Operation::Error,
+            "add" => Operation::Add,
+            "sub" => Operation::Sub,
+            "mul" => Operation::Mul,
+            "div" => Operation::Div,
+            "mod" => Operation::Mod,
+            _ => Operation::Error,
         }
     }
 
     pub fn is_op(op_name: &str) -> bool {
         let op = OpType::get_op_by_string(op_name);
-        if matches!(op, Operation::Error) {
-            return false;
-        } else {
-            return true;
-        }
+        !matches!(op, Operation::Error)
     }
 }

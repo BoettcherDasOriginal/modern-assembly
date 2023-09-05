@@ -21,8 +21,8 @@ impl IfType {
     pub fn new(condition: LangType, body: Vec<LangType>, else_body: Vec<LangType>) -> Self {
         Self {
             condition: Box::new(condition),
-            body: body,
-            else_body: else_body,
+            body,
+            else_body,
         }
     }
 }

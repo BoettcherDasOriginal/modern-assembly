@@ -36,7 +36,7 @@ pub enum Token {
 
 impl Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        return match self {
+        match self {
             Token::Ident(x) => write!(f, "Ident({})", x),
             Token::Int(x) => write!(f, "Int({})", x),
             Token::String(x) => write!(f, "String({})", x),
@@ -58,7 +58,7 @@ impl Display for Token {
             Token::Else => write!(f, "Else"),
             Token::Return => write!(f, "Return"),
             Token::End => write!(f, "End"),
-        };
+        }
     }
 }
 
@@ -80,7 +80,7 @@ impl Lexer {
         };
         lex.read_char();
 
-        return lex;
+        lex
     }
 
     pub fn next_token(&mut self) -> Result<Token> {
@@ -132,14 +132,14 @@ impl Lexer {
         };
 
         self.read_char();
-        return Ok(tok);
+        Ok(tok)
     }
 
     fn peek(&self) -> u8 {
         if self.read_position >= self.input.len() {
-            return 0;
+            0
         } else {
-            return self.input[self.read_position];
+            self.input[self.read_position]
         }
     }
 

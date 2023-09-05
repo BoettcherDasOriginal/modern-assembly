@@ -18,10 +18,7 @@ pub struct ParserResult {
 
 impl ParserResult {
     pub fn new(lang_t: LangType, pos: usize) -> Self {
-        Self {
-            lang_t: lang_t,
-            pos: pos,
-        }
+        Self { lang_t, pos }
     }
 }
 
@@ -29,30 +26,22 @@ impl ParserResult {
 
 #[derive(Debug)]
 pub struct Parser {
-    tokenlist: Vec<Token>,
-    organized_tokenlist: Vec<Vec<Token>>, //Token list splited by new line
+    organized_tokenlist: Vec<Vec<Token>>, //Token list splitted by new line
 }
 
 impl Parser {
     pub fn new(tokenlist: Vec<Token>) -> Self {
         Self {
-            tokenlist: tokenlist.clone(),
-            organized_tokenlist: organize_tokenlist(tokenlist),
+            organized_tokenlist: organize_tokenlist(&tokenlist),
         }
     }
 
     pub fn parse_file(&mut self) -> Result<Vec<LangType>> {
-        let Self {
-            tokenlist,
-            organized_tokenlist,
-        } = self;
-
-        *organized_tokenlist = organize_tokenlist(tokenlist.to_vec());
-        let mut ast: Vec<LangType> = vec![];
+        let max_pos = self.organized_tokenlist.len();
+        let mut ast = vec![];
         let mut pos = 0;
-        let max_pos = organized_tokenlist.len();
 
-        loop {
+        while pos < max_pos {
             if pos >= max_pos {
                 break;
             }
@@ -66,89 +55,85 @@ impl Parser {
             pos = lang_t.pos + 1;
         }
 
-        return Ok(ast);
+        Ok(ast)
     }
 
     fn parse_line(&mut self, mut pos: usize) -> Result<ParserResult> {
-        let Self {
-            tokenlist: _,
-            organized_tokenlist,
-        } = self;
-        if pos >= organized_tokenlist.len() {
+        if pos >= self.organized_tokenlist.len() {
             return Ok(ParserResult::new(LangType::Undefined(0), pos));
         }
-        if &0 == &organized_tokenlist[pos].len() {
+        if self.organized_tokenlist[pos].is_empty() {
             return Ok(ParserResult::new(LangType::Undefined(0), pos));
         }
-        let tok = &organized_tokenlist[pos][0];
+        let tok = &self.organized_tokenlist[pos][0];
 
         match tok {
             //Op parser
             Token::Ident(op_name) => {
                 if OpType::is_op(op_name) {
                     let op = OpType::get_op_by_string(op_name);
-                    if organized_tokenlist[pos].len() > 3 {
-                        let mut var_name = "".to_string();
-                        if let Token::Ident(name) = &organized_tokenlist[pos][1] {
+                    if self.organized_tokenlist[pos].len() > 3 {
+                        let var_name;
+                        if let Token::Ident(name) = &self.organized_tokenlist[pos][1] {
                             var_name = name.to_string();
                         } else {
                             return Ok(ParserResult::new(LangType::Undefined(0), pos));
                         }
 
                         let dest = LangType::Var(VarType::new(var_name));
-                        let lhs = get_hs(organized_tokenlist.to_vec(), pos, 2).unwrap();
-                        let rhs = get_hs(organized_tokenlist.to_vec(), pos, 3).unwrap();
+                        let lhs = get_hs(self.organized_tokenlist.to_vec(), pos, 2).unwrap();
+                        let rhs = get_hs(self.organized_tokenlist.to_vec(), pos, 3).unwrap();
 
                         let result = LangType::Op(OpType::new(op, lhs, rhs));
-                        return Ok(ParserResult::new(
+                        Ok(ParserResult::new(
                             LangType::Op(OpType::new(Operation::Assign, dest, result)),
                             pos,
-                        ));
+                        ))
                     } else {
-                        let mut var_name = "".to_string();
-                        if let Token::Ident(name) = &organized_tokenlist[pos][1] {
+                        let var_name;
+                        if let Token::Ident(name) = &self.organized_tokenlist[pos][1] {
                             var_name = name.to_string();
                         } else {
                             return Ok(ParserResult::new(LangType::Undefined(0), pos));
                         }
 
                         let lhs = LangType::Var(VarType::new(var_name));
-                        let rhs = get_hs(organized_tokenlist.to_vec(), pos, 2).unwrap();
+                        let rhs = get_hs(self.organized_tokenlist.to_vec(), pos, 2).unwrap();
 
                         let result = LangType::Op(OpType::new(op, lhs.clone(), rhs));
-                        return Ok(ParserResult::new(
+                        Ok(ParserResult::new(
                             LangType::Op(OpType::new(Operation::Assign, lhs, result)),
                             pos,
-                        ));
+                        ))
                     }
                 } else {
-                    return Ok(ParserResult::new(LangType::Undefined(0), pos));
+                    Ok(ParserResult::new(LangType::Undefined(0), pos))
                 }
             }
 
             //Var parser, Todo: Const Handling
             Token::Const | Token::Let => {
                 // make sure var is var
-                let mut var_name = "".to_string();
-                if let Token::Ident(name) = &organized_tokenlist[pos][1] {
+                let var_name;
+                if let Token::Ident(name) = &self.organized_tokenlist[pos][1] {
                     var_name = name.to_string();
                 } else {
                     return Ok(ParserResult::new(LangType::Undefined(0), pos));
                 }
 
                 let lhs = LangType::Var(VarType::new(var_name));
-                let rhs = get_hs(organized_tokenlist.to_vec(), pos, 2).unwrap();
+                let rhs = get_hs(self.organized_tokenlist.to_vec(), pos, 2).unwrap();
 
-                return Ok(ParserResult::new(
+                Ok(ParserResult::new(
                     LangType::Op(OpType::new(Operation::Assign, lhs, rhs)),
                     pos,
-                ));
+                ))
             }
 
             //Function parser
             Token::Function => {
-                let mut fn_name = "".to_string();
-                if let Token::Ident(name) = &organized_tokenlist[pos][1] {
+                let fn_name;
+                if let Token::Ident(name) = &self.organized_tokenlist[pos][1] {
                     fn_name = name.to_string();
                 } else {
                     return Ok(ParserResult::new(LangType::Undefined(0), pos));
@@ -168,21 +153,21 @@ impl Parser {
                     pos = lang_t.pos;
                 }
 
-                return Ok(ParserResult::new(
+                Ok(ParserResult::new(
                     LangType::Func(FuncType::new(fn_name, fn_body)),
                     pos,
-                ));
+                ))
             }
 
             //If/else parser
             Token::If => {
                 //lhs & rhs for the condition
-                let lhs = get_hs(organized_tokenlist.to_vec(), pos, 1).unwrap();
+                let lhs = get_hs(self.organized_tokenlist.to_vec(), pos, 1).unwrap();
 
-                let rhs = get_hs(organized_tokenlist.to_vec(), pos, 3).unwrap();
+                let rhs = get_hs(self.organized_tokenlist.to_vec(), pos, 3).unwrap();
 
                 //op for the condition
-                let condition = match &organized_tokenlist[pos][2] {
+                let condition = match &self.organized_tokenlist[pos][2] {
                     Token::Equal => LangType::Op(OpType::new(Operation::Equal, lhs, rhs)),
 
                     Token::NotEqual => LangType::Op(OpType::new(Operation::NotEqual, lhs, rhs)),
@@ -229,41 +214,35 @@ impl Parser {
                     pos = lang_t.pos;
                 }
 
-                return Ok(ParserResult::new(
+                Ok(ParserResult::new(
                     LangType::If(IfType::new(condition, if_body, else_body)),
                     pos,
-                ));
+                ))
             }
 
             //End
-            Token::End => {
-                return Ok(ParserResult::new(LangType::End, pos));
-            }
+            Token::End => Ok(ParserResult::new(LangType::End, pos)),
 
             //File End
-            Token::Eof => {
-                return Ok(ParserResult::new(LangType::Eof, pos));
-            }
+            Token::Eof => Ok(ParserResult::new(LangType::Eof, pos)),
 
-            _ => {
-                return Ok(ParserResult::new(LangType::Undefined(0), pos));
-            }
+            _ => Ok(ParserResult::new(LangType::Undefined(0), pos)),
         }
     }
 }
 
 // -----------------
 
-pub fn organize_tokenlist(tokenlist: Vec<Token>) -> Vec<Vec<Token>> {
+pub fn organize_tokenlist(tokenlist: &[Token]) -> Vec<Vec<Token>> {
     let mut organized_list = vec![vec![]];
     let mut level: Vec<Token> = vec![];
 
     for t in tokenlist {
-        if t == Token::NewLine {
-            if organized_list[0] == vec![] && level.len() != 0 {
+        if t == &Token::NewLine {
+            if organized_list[0] == vec![] && !level.is_empty() {
                 organized_list[0] = level.clone();
                 level = vec![];
-            } else if level.len() != 0 {
+            } else if !level.is_empty() {
                 organized_list.append(&mut vec![level.clone()]);
                 level = vec![];
             }
@@ -272,7 +251,7 @@ pub fn organize_tokenlist(tokenlist: Vec<Token>) -> Vec<Vec<Token>> {
         }
     }
 
-    return organized_list;
+    organized_list
 }
 
 fn get_hs(organized_tokenlist: Vec<Vec<Token>>, x_pos: usize, y_pos: usize) -> Result<LangType> {
@@ -345,11 +324,11 @@ mod test {
             Token::NewLine,
         ];
 
-        let mut lex = Lexer::new(input.into());
+        let lex = Lexer::new(input.into()).collect().unwrap();
 
-        let mut par = Parser::new(lex.collect().unwrap());
+        let mut par = Parser::new(lex.clone());
 
-        println!("{:?}", par.tokenlist);
+        println!("{:?}", lex);
         println!("{:?}", par.organized_tokenlist);
         println!("{:?}", par.parse_file());
 

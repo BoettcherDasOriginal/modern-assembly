@@ -17,9 +17,6 @@ impl Default for FuncType {
 
 impl FuncType {
     pub fn new(name: String, body: Vec<LangType>) -> Self {
-        Self {
-            name: name,
-            body: body,
-        }
+        Self { name, body }
     }
 }

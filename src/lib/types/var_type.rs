@@ -13,6 +13,6 @@ impl Default for VarType {
 
 impl VarType {
     pub fn new(name: String) -> Self {
-        Self { name: name }
+        Self { name }
     }
 }
