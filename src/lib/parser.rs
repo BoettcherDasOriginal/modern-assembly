@@ -1,4 +1,3 @@
-use anyhow::Ok;
 use anyhow::Result;
 
 use crate::lexer::Token;
@@ -46,7 +45,7 @@ impl Parser {
                 break;
             }
 
-            let lang_t = self.parse_line(pos).unwrap();
+            let lang_t = self.parse_line(pos)?;
             if matches!(lang_t.lang_t, LangType::Eof) {
                 break;
             }
@@ -81,8 +80,8 @@ impl Parser {
                         }
 
                         let dest = LangType::Var(VarType::new(var_name));
-                        let lhs = get_hs(self.organized_tokenlist.to_vec(), pos, 2).unwrap();
-                        let rhs = get_hs(self.organized_tokenlist.to_vec(), pos, 3).unwrap();
+                        let lhs = get_hs(self.organized_tokenlist.to_vec(), pos, 2)?;
+                        let rhs = get_hs(self.organized_tokenlist.to_vec(), pos, 3)?;
 
                         let result = LangType::Op(OpType::new(op, lhs, rhs));
                         Ok(ParserResult::new(
@@ -98,7 +97,7 @@ impl Parser {
                         }
 
                         let lhs = LangType::Var(VarType::new(var_name));
-                        let rhs = get_hs(self.organized_tokenlist.to_vec(), pos, 2).unwrap();
+                        let rhs = get_hs(self.organized_tokenlist.to_vec(), pos, 2)?;
 
                         let result = LangType::Op(OpType::new(op, lhs.clone(), rhs));
                         Ok(ParserResult::new(
@@ -122,7 +121,7 @@ impl Parser {
                 }
 
                 let lhs = LangType::Var(VarType::new(var_name));
-                let rhs = get_hs(self.organized_tokenlist.to_vec(), pos, 2).unwrap();
+                let rhs = get_hs(self.organized_tokenlist.to_vec(), pos, 2)?;
 
                 Ok(ParserResult::new(
                     LangType::Op(OpType::new(Operation::Assign, lhs, rhs)),
@@ -141,7 +140,7 @@ impl Parser {
 
                 let mut fn_body: Vec<LangType> = vec![];
                 loop {
-                    let lang_t = self.parse_line(pos + 1).unwrap();
+                    let lang_t = self.parse_line(pos + 1)?;
                     if matches!(lang_t.lang_t, LangType::End) {
                         break;
                     }
@@ -162,9 +161,9 @@ impl Parser {
             //If/else parser
             Token::If => {
                 //lhs & rhs for the condition
-                let lhs = get_hs(self.organized_tokenlist.to_vec(), pos, 1).unwrap();
+                let lhs = get_hs(self.organized_tokenlist.to_vec(), pos, 1)?;
 
-                let rhs = get_hs(self.organized_tokenlist.to_vec(), pos, 3).unwrap();
+                let rhs = get_hs(self.organized_tokenlist.to_vec(), pos, 3)?;
 
                 //op for the condition
                 let condition = match &self.organized_tokenlist[pos][2] {
@@ -185,7 +184,7 @@ impl Parser {
 
                 let mut if_body: Vec<LangType> = vec![];
                 loop {
-                    let lang_t = self.parse_line(pos + 1).unwrap();
+                    let lang_t = self.parse_line(pos + 1)?;
                     if matches!(lang_t.lang_t, LangType::End) {
                         break;
                     }
@@ -202,7 +201,7 @@ impl Parser {
 
                 let mut else_body: Vec<LangType> = vec![];
                 loop {
-                    let lang_t = self.parse_line(pos + 1).unwrap();
+                    let lang_t = self.parse_line(pos + 1)?;
                     if matches!(lang_t.lang_t, LangType::End) {
                         break;
                     }
@@ -281,7 +280,6 @@ fn get_hs(organized_tokenlist: Vec<Vec<Token>>, x_pos: usize, y_pos: usize) -> R
 
 #[cfg(test)]
 mod test {
-    use anyhow::Ok;
     use anyhow::Result;
 
     use super::Parser;
@@ -324,7 +322,7 @@ mod test {
             Token::NewLine,
         ];
 
-        let lex = Lexer::new(input.into()).collect().unwrap();
+        let lex = Lexer::new(input.into()).collect()?;
 
         let mut par = Parser::new(lex.clone());
 
