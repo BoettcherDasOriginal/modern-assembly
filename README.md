@@ -16,7 +16,7 @@ Modern Assembly is an experimental programming language engineered with Rust and
 
 - High-Level Syntax: Enjoy readability and ease-of-use akin to high-level languages.
 - Low-Level Control: Get down to the metal, controlling every aspect of the code.
-- Optimized Performance: Built with Rust and LLVM for blazing fast execution.
+- Optimized Performance: Built with Rust and LLVM for blazingly fast execution.
 
 ## Quick Start
 
