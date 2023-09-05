@@ -1,7 +1,7 @@
 use anyhow::Ok;
 use anyhow::Result;
 
-use crate::lexer::lexer::Token;
+use crate::lexer::Token;
 use crate::types::func_type::FuncType;
 use crate::types::if_type::IfType;
 use crate::types::lang_type::LangType;
@@ -285,8 +285,8 @@ mod test {
     use anyhow::Result;
 
     use super::Parser;
-    use crate::lexer::lexer::Lexer;
-    use crate::lexer::lexer::Token;
+    use crate::lexer::Lexer;
+    use crate::lexer::Token;
 
     #[test]
     fn parse_string() -> Result<()> {
