@@ -59,7 +59,7 @@ impl Parser {
 
     fn parse_line(&mut self, mut pos: usize) -> Result<ParserResult> {
         if pos >= self.organized_tokenlist.len() {
-            return Err(anyhow!("Expected end of input"));
+            return Err(anyhow!("Expected end of input at position {}", pos));
         }
         if self.organized_tokenlist[pos].is_empty() {
             return Err(anyhow!("Empty line at position {}", pos));
@@ -76,7 +76,7 @@ impl Parser {
                         if let Token::Ident(name) = &self.organized_tokenlist[pos][1] {
                             var_name = name.to_string();
                         } else {
-                            return Err(anyhow!("Expected Operand at position {}", pos));
+                            return Err(anyhow!("Unexpected Operand at position {}", pos));
                         }
 
                         let dest = LangType::Var(VarType::new(var_name));
@@ -93,7 +93,7 @@ impl Parser {
                         if let Token::Ident(name) = &self.organized_tokenlist[pos][1] {
                             var_name = name.to_string();
                         } else {
-                            return Err(anyhow!("Expected Operand at position {}", pos));
+                            return Err(anyhow!("Unexpected Operand at position {}", pos));
                         }
 
                         let lhs = LangType::Var(VarType::new(var_name));
@@ -117,7 +117,7 @@ impl Parser {
                 if let Token::Ident(name) = &self.organized_tokenlist[pos][1] {
                     var_name = name.to_string();
                 } else {
-                    return Err(anyhow!("Expected Variable Name at position {}", pos));
+                    return Err(anyhow!("Unexpected Variable Name at position {}", pos));
                 }
 
                 let lhs = LangType::Var(VarType::new(var_name));
@@ -135,7 +135,7 @@ impl Parser {
                 if let Token::Ident(name) = &self.organized_tokenlist[pos][1] {
                     fn_name = name.to_string();
                 } else {
-                    return Err(anyhow!("Expected Function Name at position {}", pos));
+                    return Err(anyhow!("Unexpected Function Name at position {}", pos));
                 }
 
                 let mut fn_body: Vec<LangType> = vec![];
@@ -292,7 +292,7 @@ mod test {
         let a 5
         if a != 4:
             add a a 6
-        end
+        
     end"#;
 
         let _tokens = vec![
