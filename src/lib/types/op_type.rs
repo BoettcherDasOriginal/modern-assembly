@@ -33,8 +33,8 @@ impl Default for OpType {
     fn default() -> Self {
         Self {
             op: Operation::Assign,
-            lhs: Box::new(LangType::Undefined(0)),
-            rhs: Box::new(LangType::Undefined(0)),
+            lhs: Box::new(LangType::Undefined),
+            rhs: Box::new(LangType::Undefined),
         }
     }
 }
