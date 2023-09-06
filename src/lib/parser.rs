@@ -1,4 +1,4 @@
-use anyhow::{Result, anyhow};
+use anyhow::{anyhow, Result};
 
 use crate::lexer::Token;
 use crate::types::func_type::FuncType;
@@ -225,7 +225,7 @@ impl Parser {
             //File End
             Token::Eof => Ok(ParserResult::new(LangType::Eof, pos)),
 
-            _ => Err(anyhow!("Unexpected token at position {}", pos))
+            _ => Err(anyhow!("Unexpected token at position {}", pos)),
         }
     }
 }
