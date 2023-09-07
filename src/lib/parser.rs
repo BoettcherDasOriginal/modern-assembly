@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 
 use crate::lexer::Token;
 use crate::types::func_type::FuncType;
@@ -59,10 +59,10 @@ impl Parser {
 
     fn parse_line(&mut self, mut pos: usize) -> Result<ParserResult> {
         if pos >= self.organized_tokenlist.len() {
-            return Ok(ParserResult::new(LangType::Undefined(0), pos));
+            return Err(anyhow!("Expected end of input at position {}", pos));
         }
         if self.organized_tokenlist[pos].is_empty() {
-            return Ok(ParserResult::new(LangType::Undefined(0), pos));
+            return Err(anyhow!("Empty line at position {}", pos));
         }
         let tok = &self.organized_tokenlist[pos][0];
 
@@ -76,7 +76,7 @@ impl Parser {
                         if let Token::Ident(name) = &self.organized_tokenlist[pos][1] {
                             var_name = name.to_string();
                         } else {
-                            return Ok(ParserResult::new(LangType::Undefined(0), pos));
+                            return Err(anyhow!("Unexpected Operand at position {}", pos));
                         }
 
                         let dest = LangType::Var(VarType::new(var_name));
@@ -93,7 +93,7 @@ impl Parser {
                         if let Token::Ident(name) = &self.organized_tokenlist[pos][1] {
                             var_name = name.to_string();
                         } else {
-                            return Ok(ParserResult::new(LangType::Undefined(0), pos));
+                            return Err(anyhow!("Unexpected Operand at position {}", pos));
                         }
 
                         let lhs = LangType::Var(VarType::new(var_name));
@@ -106,7 +106,7 @@ impl Parser {
                         ))
                     }
                 } else {
-                    Ok(ParserResult::new(LangType::Undefined(0), pos))
+                    Err(anyhow!("Invalid Operation at position {}", pos))
                 }
             }
 
@@ -117,7 +117,7 @@ impl Parser {
                 if let Token::Ident(name) = &self.organized_tokenlist[pos][1] {
                     var_name = name.to_string();
                 } else {
-                    return Ok(ParserResult::new(LangType::Undefined(0), pos));
+                    return Err(anyhow!("Unexpected Variable Name at position {}", pos));
                 }
 
                 let lhs = LangType::Var(VarType::new(var_name));
@@ -135,7 +135,7 @@ impl Parser {
                 if let Token::Ident(name) = &self.organized_tokenlist[pos][1] {
                     fn_name = name.to_string();
                 } else {
-                    return Ok(ParserResult::new(LangType::Undefined(0), pos));
+                    return Err(anyhow!("Unexpected Function Name at position {}", pos));
                 }
 
                 let mut fn_body: Vec<LangType> = vec![];
@@ -177,7 +177,7 @@ impl Parser {
                         LangType::Op(OpType::new(Operation::GreaterThan, lhs, rhs))
                     }
 
-                    _ => LangType::Undefined(0),
+                    _ => return Err(anyhow!("Expected Operator at position {}", pos,)),
                 };
 
                 //get if/else bodys
@@ -225,7 +225,7 @@ impl Parser {
             //File End
             Token::Eof => Ok(ParserResult::new(LangType::Eof, pos)),
 
-            _ => Ok(ParserResult::new(LangType::Undefined(0), pos)),
+            _ => Err(anyhow!("Unexpected token at position {}", pos)),
         }
     }
 }
@@ -269,7 +269,7 @@ fn get_hs(organized_tokenlist: Vec<Vec<Token>>, x_pos: usize, y_pos: usize) -> R
             LangType::Primitive(PrimitiveType::new(value.to_string(), Primitives::Bool))
         }
 
-        _ => LangType::Undefined(0),
+        _ => return Err(anyhow!("Invalid token at position {}, {}", x_pos, y_pos)),
     };
 
     Ok(hs)
@@ -292,7 +292,7 @@ mod test {
         let a 5
         if a != 4:
             add a a 6
-        end
+        
     end"#;
 
         let _tokens = vec![

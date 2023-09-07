@@ -17,6 +17,5 @@ pub enum LangType {
     End,
     Eof,
 
-    // for future Error Handling
-    Undefined(u32),
+    Undefined,
 }

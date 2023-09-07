@@ -10,7 +10,7 @@ pub struct IfType {
 impl Default for IfType {
     fn default() -> Self {
         Self {
-            condition: Box::new(LangType::Undefined(0)),
+            condition: Box::new(LangType::Undefined),
             body: vec![],
             else_body: vec![],
         }
