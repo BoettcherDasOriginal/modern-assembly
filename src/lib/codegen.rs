@@ -3,6 +3,7 @@ use anyhow::{anyhow, Result, Ok};
 use inkwell::builder::Builder;
 use inkwell::context::Context;
 use inkwell::execution_engine::{ExecutionEngine, JitFunction};
+use inkwell::values::{BasicMetadataValueEnum, IntValue, FunctionValue, PointerValue};
 use inkwell::module::Module;
 
 use crate::types::func_type::FuncType;
@@ -28,9 +29,23 @@ impl<'ctx> CodeGen<'ctx> {
         self.module = self.context.create_module(&name.to_string());
         self.module_ast = ast;
 
-        // To do: Compile ;)
+        for func_type in self.module_ast.clone() {
+            if let LangType::Func(func) = func_type {
+                let new_fn = self.compile_fn(func)?;
+                self.module.add_function(new_fn.get_name().to_str()?, new_fn.get_type(), Option::None);
+            }
+            else {
+                return Err(anyhow!("Expression outside of function!"));
+            }
+        }
 
         Ok(self.module.to_owned())
+    }
+
+    fn compile_fn(&mut self, fn_type: FuncType) -> Result<FunctionValue<'ctx>> {
+        let fn_type = self.context.f32_type().fn_type(&[], false);
+        let fn_val = self.module.add_function("my_function", fn_type, None);
+        Ok(fn_val)
     }
 }
 
