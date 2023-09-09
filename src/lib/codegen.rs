@@ -4,6 +4,7 @@ use inkwell::builder::Builder;
 use inkwell::context::Context;
 use inkwell::execution_engine::{ExecutionEngine, JitFunction};
 use inkwell::values::{BasicMetadataValueEnum, IntValue, FunctionValue, PointerValue};
+use inkwell::types::BasicMetadataTypeEnum;
 use inkwell::module::Module;
 
 use crate::types::func_type::FuncType;
@@ -42,9 +43,43 @@ impl<'ctx> CodeGen<'ctx> {
         Ok(self.module.to_owned())
     }
 
-    fn compile_fn(&mut self, fn_type: FuncType) -> Result<FunctionValue<'ctx>> {
-        let fn_type = self.context.f32_type().fn_type(&[], false);
-        let fn_val = self.module.add_function("my_function", fn_type, None);
+    fn compile_fn(&mut self, func_type: FuncType) -> Result<FunctionValue<'ctx>> {
+
+        //-----------
+        // Prototype
+        //-----------
+
+        let ret_type = self.context.i32_type();
+        let args_types = std::iter::repeat(ret_type)
+            .take(func_type.param.len())
+            .map(|f| f.into())
+            .collect::<Vec<BasicMetadataTypeEnum>>();
+        let args_types = args_types.as_slice();
+        
+        let fn_type = self.context.i32_type().fn_type(&args_types, false);
+        let fn_val = self.module.add_function(&func_type.name, fn_type, None);
+
+        // set arguments names
+        for (i, arg) in fn_val.get_param_iter().enumerate() {
+            arg.into_float_value().set_name(func_type.param[i].name.as_str());
+        }
+
+        // got external function, returning only compiled prototype
+        if func_type.body.is_empty() {
+            return Ok(fn_val);
+        }
+
+        let entry = self.context.append_basic_block(fn_val, "entry");
+
+        self.builder.position_at_end(entry);
+
+
+        //------------
+        // Body
+        //------------
+
+        //To do: Compile Body
+
         Ok(fn_val)
     }
 }
