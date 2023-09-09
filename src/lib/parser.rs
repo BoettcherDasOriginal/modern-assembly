@@ -131,6 +131,7 @@ impl Parser {
 
             //Function parser
             Token::Function => {
+                //get name
                 let fn_name;
                 if let Token::Ident(name) = &self.organized_tokenlist[pos][1] {
                     fn_name = name.to_string();
@@ -138,6 +139,24 @@ impl Parser {
                     return Err(anyhow!("Unexpected Function Name at position {}", pos));
                 }
 
+                //get params
+                let mut params: Vec<VarType> = vec![];
+                for par in self.organized_tokenlist[pos].clone() {
+                    match par {
+                        Token::Colon => {
+                            break;
+                        }
+
+                        Token::Ident(name) => {
+                            if name == fn_name{ continue; }
+                            params.append(&mut vec![VarType::new(name)])
+                        },
+
+                        _ => {}
+                    }
+                }
+
+                //get body
                 let mut fn_body: Vec<LangType> = vec![];
                 loop {
                     let lang_t = self.parse_line(pos + 1)?;
@@ -153,7 +172,7 @@ impl Parser {
                 }
 
                 Ok(ParserResult::new(
-                    LangType::Func(FuncType::new(fn_name, fn_body)),
+                    LangType::Func(FuncType::new(fn_name,params, fn_body)),
                     pos,
                 ))
             }
@@ -288,11 +307,11 @@ mod test {
 
     #[test]
     fn parse_string() -> Result<()> {
-        let input = r#"fn main:
+        let input = r#"fn main x y:
         let a 5
         if a != 4:
             add a a 6
-        
+        end
     end"#;
 
         let _tokens = vec![
