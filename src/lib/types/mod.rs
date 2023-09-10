@@ -5,3 +5,4 @@ pub mod op_type;
 pub mod primitive_type;
 pub mod var_type;
 pub mod const_type;
+pub mod call_type;

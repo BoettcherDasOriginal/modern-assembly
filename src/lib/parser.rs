@@ -1,3 +1,4 @@
+use anyhow::Ok;
 use anyhow::{anyhow, Result};
 
 use crate::lexer::Token;
@@ -10,6 +11,7 @@ use crate::types::primitive_type::PrimitiveType;
 use crate::types::primitive_type::Primitives;
 use crate::types::var_type::VarType;
 use crate::types::const_type::ConstType;
+use crate::types::call_type::CallType;
 
 pub struct ParserResult {
     pub lang_t: LangType,
@@ -106,7 +108,36 @@ impl Parser {
                             pos,
                         ))
                     }
-                } else {
+                } 
+                else if self.organized_tokenlist[pos].len() > 2 {
+                    if self.organized_tokenlist[pos][1] == Token::Lparen {
+                        let mut param = Vec::new();
+                        let mut win = false;
+                        let mut i = 1;
+                        for p in self.organized_tokenlist[pos].clone() {
+                            if !win && p == Token::Lparen {
+                                win = true;
+                                continue;
+                            }
+                            else if win && p == Token::Rparen {
+                                win = false;
+                                break;
+                            }
+
+                            if win {
+                                let arg = get_hs(self.organized_tokenlist.to_vec(), pos, i)?;
+                                param.append(&mut vec![arg]);
+                            }
+
+                            i = i + 1;
+                        }
+                        Ok(ParserResult::new(LangType::Call(CallType::new(op_name.to_string(), param)), pos))
+                    }
+                    else {
+                        Err(anyhow!("Invalid Operation at position {}", pos))
+                    }
+                }
+                else {
                     Err(anyhow!("Invalid Operation at position {}", pos))
                 }
             }
@@ -261,6 +292,8 @@ impl Parser {
                     pos,
                 ))
             }
+            //Comment
+            Token::Comment(c) => Ok(ParserResult::new(LangType::Comment(c.to_string()), pos)),
 
             //End
             Token::End => Ok(ParserResult::new(LangType::End, pos)),
@@ -335,6 +368,7 @@ mod test {
         let a 5
         if a != 4:
             add a a 6
+            print(a)
         end
     end"#;
 
