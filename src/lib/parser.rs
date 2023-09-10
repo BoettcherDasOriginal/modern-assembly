@@ -9,6 +9,7 @@ use crate::types::op_type::Operation;
 use crate::types::primitive_type::PrimitiveType;
 use crate::types::primitive_type::Primitives;
 use crate::types::var_type::VarType;
+use crate::types::const_type::ConstType;
 
 pub struct ParserResult {
     pub lang_t: LangType,
@@ -110,8 +111,8 @@ impl Parser {
                 }
             }
 
-            //Var parser, Todo: Const Handling
-            Token::Const | Token::Let => {
+            //Var parser
+            Token::Let => {
                 // make sure var is var
                 let var_name;
                 if let Token::Ident(name) = &self.organized_tokenlist[pos][1] {
@@ -125,6 +126,29 @@ impl Parser {
 
                 Ok(ParserResult::new(
                     LangType::Op(OpType::new(Operation::Assign, lhs, rhs)),
+                    pos,
+                ))
+            }
+
+            //Const parser
+            Token::Const => {
+                let con_name;
+                if let Token::Ident(name) = &self.organized_tokenlist[pos][1] {
+                    con_name = name.to_string();
+                } else {
+                    return Err(anyhow!("Unexpected Variable Name at position {}", pos));
+                }
+
+                let prim;
+                if let LangType::Primitive(p) = get_hs(self.organized_tokenlist.to_vec(), pos, 2)? {
+                    prim = p;
+                }
+                else {
+                    return Err(anyhow!("Unexpected Constant value at position {}", pos));
+                }
+
+                Ok(ParserResult::new(
+                    LangType::Const(ConstType::new(con_name,prim.value)),
                     pos,
                 ))
             }
