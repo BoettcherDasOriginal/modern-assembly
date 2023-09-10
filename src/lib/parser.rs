@@ -120,7 +120,6 @@ impl Parser {
                                 continue;
                             }
                             else if win && p == Token::Rparen {
-                                win = false;
                                 break;
                             }
 
