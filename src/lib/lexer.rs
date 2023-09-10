@@ -17,6 +17,8 @@ pub enum Token {
 
     Bang,
     Colon,
+    Lparen,
+    Rparen,
 
     Equal,
     NotEqual,
@@ -51,6 +53,8 @@ impl Display for Token {
             Token::LessThan => write!(f, "LessThan"),
             Token::GreaterThan => write!(f, "GreaterThan"),
             Token::Colon => write!(f, "Colon"),
+            Token::Lparen => write!(f, "Lparen"),
+            Token::Rparen => write!(f, "Rparen"),
             Token::Function => write!(f, "Function"),
             Token::Const => write!(f, "Const"),
             Token::Let => write!(f, "Let"),
@@ -96,6 +100,8 @@ impl Lexer {
                     Token::Bang
                 }
             }
+            b'(' => Token::Lparen,
+            b')' => Token::Rparen,
             b'>' => Token::GreaterThan,
             b'<' => Token::LessThan,
             b'=' => {
@@ -244,7 +250,7 @@ mod test {
         let input = r#"fn main:
             let a 5
             if a != 4:
-                print "too baad!"
+                print("too baad!")
             end
         end
         "#;
@@ -267,7 +273,9 @@ mod test {
             Token::Colon,
             Token::NewLine,
             Token::Ident(String::from("print")),
+            Token::Lparen,
             Token::String(String::from("too baad!")),
+            Token::Rparen,
             Token::NewLine,
             Token::End,
             Token::NewLine,
@@ -289,20 +297,20 @@ mod test {
     fn get_next_print() -> Result<()> {
         let input = r#"fn main:
             const msg "Hello, world!"
-            print msg
+            print(msg)
                     
             let x 1
             add x 2
-            print x
+            print(x)
         
             if msg == x:
-                print "???"
+                print("???")
             else:
                 move x 1
             end
             
             let aw
-            move aw openDir "./test/RT.pdf"
+            move aw openDir("./test/RT.pdf")
         end
 
         fn openDir asd:
