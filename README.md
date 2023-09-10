@@ -25,14 +25,14 @@ Here is a small example that prints "Hello, World!" and performs a basic calcula
 ```
 fn main:
   const msg "Hello, world!"
-  print msg
+  print(msg)
             
   let x 1
   add x 2 2
-  print x
+  print(x)
 
   if msg == x:
-     print "???"
+     print("???")
   else:
      move x 1
   end
